@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>D365 FO Version Search</title>
+    <style>
+      :root {
+        --bg: #f7f4ef;
+        --panel: #fff7ea;
+        --ink: #1f1a17;
+        --muted: #6b5d55;
+        --accent: #c44601;
+        --accent-2: #1b7f79;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Georgia", "Times New Roman", serif;
+        color: var(--ink);
+        background: radial-gradient(1000px 500px at 10% 0%, #ffe6c7, transparent),
+          radial-gradient(900px 450px at 90% 10%, #ffd6c2, transparent),
+          var(--bg);
+      }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 36px 20px 80px;
+      }
+
+      header {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 36px;
+        letter-spacing: 0.4px;
+      }
+
+      .tagline {
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 2px solid var(--ink);
+        box-shadow: 6px 6px 0 #0000001f;
+        padding: 20px;
+        border-radius: 12px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      label {
+        font-weight: 600;
+      }
+
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        font-size: 15px;
+        background: #fffaf2;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        border: 2px solid var(--ink);
+        border-radius: 999px;
+        padding: 6px 12px;
+        background: #fffaf2;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+
+      button {
+        border: 2px solid var(--ink);
+        background: var(--accent);
+        color: #fff;
+        font-weight: 700;
+        padding: 12px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        letter-spacing: 0.2px;
+      }
+
+      button.secondary {
+        background: var(--accent-2);
+      }
+
+      .preview {
+        margin-top: 16px;
+        font-size: 14px;
+        color: var(--muted);
+        word-break: break-word;
+      }
+
+      @media (max-width: 640px) {
+        h1 {
+          font-size: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>D365 Finance & Operations Search</h1>
+        <div class="tagline">
+          Build a smart query to find new, deprecated, or removed features by version.
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="grid">
+          <div>
+            <label for="keyword">Keywords</label>
+            <input
+              id="keyword"
+              type="text"
+              placeholder="e.g., credit limits, vendor invoice workflow"
+            />
+          </div>
+          <div>
+            <label for="product">Product</label>
+            <select id="product">
+              <option value="Dynamics 365 Finance and Operations">Finance and Operations</option>
+              <option value="Dynamics 365 Finance">Finance</option>
+              <option value="Dynamics 365 Supply Chain Management">Supply Chain Management</option>
+            </select>
+          </div>
+          <div>
+            <label for="version">Version</label>
+            <select id="version">
+              <option value="">Any</option>
+              <option value="10.0.38">10.0.38</option>
+              <option value="10.0.37">10.0.37</option>
+              <option value="10.0.36">10.0.36</option>
+              <option value="10.0.35">10.0.35</option>
+              <option value="2025 release wave 2">2025 release wave 2</option>
+              <option value="2025 release wave 1">2025 release wave 1</option>
+            </select>
+          </div>
+          <div>
+            <label for="module">Module</label>
+            <select id="module">
+              <option value="">Any</option>
+              <option value="General ledger">General ledger</option>
+              <option value="Accounts payable">Accounts payable</option>
+              <option value="Accounts receivable">Accounts receivable</option>
+              <option value="Cash and bank management">Cash and bank management</option>
+              <option value="Procurement and sourcing">Procurement and sourcing</option>
+              <option value="Inventory management">Inventory management</option>
+            </select>
+          </div>
+          <div>
+            <label for="scope">Scope</label>
+            <select id="scope">
+              <option value="learn">Microsoft Learn only</option>
+              <option value="learn+community">Learn + Community</option>
+            </select>
+          </div>
+          <div>
+            <label for="engine">Search engine</label>
+            <select id="engine">
+              <option value="bing">Bing</option>
+              <option value="google">Google</option>
+              <option value="ddg">DuckDuckGo</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <label>Status</label>
+          <div class="row" style="margin-top: 8px;">
+            <label class="chip"><input type="checkbox" id="status-new" /> New</label>
+            <label class="chip"><input type="checkbox" id="status-deprecated" /> Deprecated</label>
+            <label class="chip"><input type="checkbox" id="status-removed" /> Removed</label>
+            <label class="chip"><input type="checkbox" id="status-changed" /> Changed</label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="search">Search</button>
+          <button id="copy" class="secondary">Copy Query</button>
+        </div>
+
+        <div class="preview" id="preview"></div>
+      </section>
+    </div>
+
+    <script>
+      const el = (id) => document.getElementById(id);
+
+      const buildQuery = () => {
+        const product = el("product").value;
+        const version = el("version").value;
+        const module = el("module").value;
+        const keyword = el("keyword").value.trim();
+        const scope = el("scope").value;
+
+        const terms = [];
+        terms.push('site:learn.microsoft.com');
+        if (scope === "learn+community") {
+          terms.push('OR site:community.dynamics.com');
+        }
+        terms.push(`"${product}"`);
+
+        if (version) {
+          terms.push(`"${version}"`);
+        }
+
+        if (module) {
+          terms.push(`"${module}"`);
+        }
+
+        if (keyword) {
+          terms.push(keyword);
+        }
+
+        if (el("status-new").checked) {
+          terms.push('"what\'s new"');
+        }
+        if (el("status-deprecated").checked) {
+          terms.push("deprecated");
+        }
+        if (el("status-removed").checked) {
+          terms.push("removed");
+        }
+        if (el("status-changed").checked) {
+          terms.push("changed");
+        }
+
+        return terms.join(" ");
+      };
+
+      const buildUrl = (query) => {
+        const engine = el("engine").value;
+        const q = encodeURIComponent(query);
+        if (engine === "google") {
+          return `https://www.google.com/search?q=${q}`;
+        }
+        if (engine === "ddg") {
+          return `https://duckduckgo.com/?q=${q}`;
+        }
+        return `https://www.bing.com/search?q=${q}`;
+      };
+
+      const updatePreview = () => {
+        const query = buildQuery();
+        const url = buildUrl(query);
+        el("preview").textContent = `Query: ${query} | URL: ${url}`;
+      };
+
+      document.addEventListener("input", updatePreview);
+
+      el("search").addEventListener("click", () => {
+        const url = buildUrl(buildQuery());
+        window.open(url, "_blank", "noopener");
+      });
+
+      el("copy").addEventListener("click", async () => {
+        const query = buildQuery();
+        try {
+          await navigator.clipboard.writeText(query);
+          el("preview").textContent = "Query copied to clipboard.";
+        } catch (error) {
+          el("preview").textContent = "Copy failed. You can manually copy the query above.";
+        }
+      });
+
+      updatePreview();
+    </script>
+  </body>
+</html>
