@@ -187,6 +187,51 @@
         .layout-grid { grid-template-columns: 1fr; }
         .wrap { height: auto; }
       }
+
+      /* Tip Card Styles */
+      .tip-panel {
+        background: #f8fbfd; /* Very subtle blue tint */
+        border-left: 3px solid var(--primary);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .tip-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .tip-badge {
+        background: var(--primary);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+      .tip-title {
+        font-weight: 600;
+        color: var(--text-main);
+        font-size: 13px;
+        margin: 0;
+      }
+      .tip-content {
+        font-size: 12px;
+        color: var(--text-sec);
+        margin-bottom: 12px;
+        line-height: 1.4;
+      }
+      .tip-link {
+        font-size: 11px;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+      }
+      .tip-link:hover { text-decoration: underline; }
     </style>
   </head>
   <body>
@@ -303,43 +348,107 @@
         <div class="preview" id="preview"></div>
         </section> <!-- Close Left Panel -->
 
-        <section class="panel"> <!-- Start Right Panel -->
-          <span class="section-title">Community & Topic Explorer</span>
-          <div class="grid">
-            <div style="grid-column: 1 / -1;">
-              <label for="topic-keyword">Topic</label>
-              <input
-                id="topic-keyword"
-                type="text"
-                placeholder="e.g. Advanced warehousing"
-              />
+        <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+          <section class="panel" style="flex: 0 0 auto;"> <!-- Top Right: Topic Search -->
+            <span class="section-title">Community & Topic Explorer</span>
+            <div class="grid">
+              <div style="grid-column: 1 / -1;">
+                <label for="topic-keyword">Topic</label>
+                <input
+                  id="topic-keyword"
+                  type="text"
+                  placeholder="e.g. Advanced warehousing"
+                />
+              </div>
+              <div style="grid-column: 1 / -1;">
+                <label for="topic-source">Source</label>
+                <select id="topic-source">
+                  <option value="blogs">Blogs & Guides (Community)</option>
+                  <option value="official">Official Docs (Microsoft)</option>
+                  <option value="all">All Sources</option>
+                </select>
+              </div>
+              <div style="grid-column: 1 / -1;">
+                <label for="topic-recency">Recency</label>
+                <select id="topic-recency">
+                  <option value="">Any time</option>
+                  <option value="y">Past Year</option>
+                  <option value="m">Past Month</option>
+                </select>
+              </div>
             </div>
-            <div style="grid-column: 1 / -1;">
-              <label for="topic-source">Source</label>
-              <select id="topic-source">
-                <option value="blogs">Blogs & Guides (Community)</option>
-                <option value="official">Official Docs (Microsoft)</option>
-                <option value="all">All Sources</option>
-              </select>
-            </div>
-            <div style="grid-column: 1 / -1;">
-              <label for="topic-recency">Recency</label>
-              <select id="topic-recency">
-                <option value="">Any time</option>
-                <option value="y">Past Year</option>
-                <option value="m">Past Month</option>
-              </select>
-            </div>
-          </div>
 
-          <div class="actions">
-            <button id="topic-search">Find Topics</button>
-          </div>
-        </section>
+            <div class="actions">
+              <button id="topic-search">Find Topics</button>
+            </div>
+          </section>
+
+          <section class="panel tip-panel" id="tip-card" style="flex: 1;">
+            <!-- Tip content injected by JS -->
+          </section>
+        </div>
       </div> <!-- Close Layout Grid -->
     </div> <!-- Close Wrap -->
 
     <script>
+      // === TIPS DATA ===
+      const d365Tips = [
+        {
+          title: "Saved Views & Personalization",
+          text: "You can publish Saved Views to specific security roles, ensuring users start with the exact columns and filters they need for their job function.",
+          link: "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/saved-views"
+        },
+        {
+          title: "Regression Suite Automation Tool (RSAT)",
+          text: "Don't just record tasks—automate them. RSAT lets you use Task Recorder recordings to build automated regression tests without writing code.",
+          link: "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/perf-test/rsat/rsat-overview"
+        },
+        {
+          title: "Feature Management",
+          text: "New features often land in a 'Disabled' state. Check the Feature Management workspace regularly to enable preview features before they become mandatory.",
+          link: "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/feature-management/feature-management-overview"
+        },
+        {
+          title: "Open in Excel",
+          text: "The 'Open in Excel' feature isn't just for viewing. You can use it to mass-update records (like Journals or Master Data) and publish changes back to D365FO.",
+          link: "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/office-integration/use-excel-add-in"
+        },
+        {
+          title: "Business Events",
+          text: "Need to trigger a Power Automate flow when a Sales Order is confirmed? Use Business Events to send signals to external systems without custom code.",
+          link: "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/business-events/home-page"
+        },
+        {
+          title: "Evaluating Performance",
+          text: "Use the 'Performance timer' (append &debug=develop:1 to URL) to see exactly which server calls or SQL queries are slowing down your form.",
+          link: "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/perf-test/performance-timer"
+        },
+        {
+          title: "Trace Parser",
+          text: "For deep debugging, capture a trace and analyze it with Trace Parser. It's the ultimate tool for finding the root cause of slow X++ processes.",
+          link: "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/perf-test/trace-trace-tutorial"
+        }
+      ];
+
+      // === RENDER TIP ===
+      const renderTip = () => {
+        const tipIndex = Math.floor(Math.random() * d365Tips.length);
+        const tip = d365Tips[tipIndex];
+        
+        const html = `
+          <div class="tip-header">
+            <span class="tip-badge">Tip of the Day</span>
+            <h3 class="tip-title">${tip.title}</h3>
+          </div>
+          <div class="tip-content">${tip.text}</div>
+          <a href="${tip.link}" target="_blank" rel="noopener" class="tip-link">Read more details &rarr;</a>
+        `;
+        document.getElementById('tip-card').innerHTML = html;
+      };
+
+      // Initialize Tip
+      renderTip();
+
       const el = (id) => document.getElementById(id);
 
       const buildQuery = () => {
