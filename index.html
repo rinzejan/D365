@@ -241,6 +241,48 @@
 
         <div class="preview" id="preview"></div>
       </section>
+
+      <div style="height: 40px;"></div>
+
+      <header>
+        <h1>Topic & Community Search</h1>
+        <div class="tagline">
+          Find guides, blogs, and explanations for specific functionality.
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="grid">
+          <div style="grid-column: 1 / -1;">
+            <label for="topic-keyword">Topic</label>
+            <input
+              id="topic-keyword"
+              type="text"
+              placeholder="e.g. Advanced warehousing, Year end close, Asset leasing"
+            />
+          </div>
+          <div>
+            <label for="topic-source">Source</label>
+            <select id="topic-source">
+              <option value="blogs">Blogs & Guides (Community)</option>
+              <option value="official">Official Docs (Microsoft)</option>
+              <option value="all">All Sources</option>
+            </select>
+          </div>
+          <div>
+            <label for="topic-recency">Recency</label>
+            <select id="topic-recency">
+              <option value="">Any time</option>
+              <option value="y">Past Year</option>
+              <option value="m">Past Month</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="topic-search">Find Topics</button>
+        </div>
+      </section>
     </div>
 
     <script>
@@ -321,6 +363,49 @@
         } catch (error) {
           el("preview").textContent = "Copy failed. You can manually copy the query above.";
         }
+      });
+
+      // Topic Search Logic
+      el("topic-search").addEventListener("click", () => {
+        const keyword = el("topic-keyword").value.trim();
+        const source = el("topic-source").value;
+        const recency = el("topic-recency").value;
+        const engine = el("engine").value;
+
+        if (!keyword) {
+          alert("Please enter a topic.");
+          return;
+        }
+
+        const terms = [];
+        terms.push('("Dynamics 365 Finance" OR "Dynamics 365 Supply Chain" OR "D365FO")');
+        terms.push(`"${keyword}"`);
+
+        if (source === "blogs") {
+          terms.push('(blog OR guide OR tutorial OR "how to" OR walkthrough)');
+        } else if (source === "official") {
+          terms.push('site:learn.microsoft.com');
+        }
+
+        const query = terms.join(" ");
+        const q = encodeURIComponent(query);
+        let url = "";
+
+        if (engine === "google") {
+          url = `https://www.google.com/search?q=${q}`;
+          if (recency) url += `&tbs=qdr:${recency}`;
+        } else if (engine === "ddg") {
+          url = `https://duckduckgo.com/?q=${q}`;
+          if (recency) url += `&df=${recency}`;
+        } else {
+          // Bing
+          url = `https://www.bing.com/search?q=${q}`;
+          if (recency === "m") {
+             url += "&filters=ex1%3a%22ez3%22"; // Past month
+          }
+        }
+
+        window.open(url, "_blank", "noopener");
       });
 
       updatePreview();
