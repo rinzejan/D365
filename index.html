@@ -63,7 +63,7 @@
       /* Main layout for side-by-side panels */
       .layout-grid {
         display: grid;
-        grid-template-columns: 1.6fr 1fr; /* Left panel wider */
+        grid-template-columns: 1.2fr 0.8fr 1fr; /* 3 Columns */
         gap: 16px;
         flex: 1;
         min-height: 0; /* Important for scroll */
@@ -232,6 +232,53 @@
         align-items: center;
       }
       .tip-link:hover { text-decoration: underline; }
+      /* AI List Styles */
+      .ai-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .ai-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 12px;
+        line-height: 1.4;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      .ai-item:last-child { border-bottom: none; }
+
+      .ai-item a {
+        color: var(--text-main);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      .ai-item a:hover {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+      
+      .ai-tag {
+        font-size: 10px;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 700;
+        white-space: nowrap;
+        margin-top: 2px;
+        min-width: 35px;
+      }
     </style>
   </head>
   <body>
@@ -348,7 +395,7 @@
         <div class="preview" id="preview"></div>
         </section> <!-- Close Left Panel -->
 
-        <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+        <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0; overflow-y: auto;">
           <section class="panel" style="flex: 0 0 auto;"> <!-- Top Right: Topic Search -->
             <span class="section-title">Community & Topic Explorer</span>
             <div class="grid">
@@ -383,14 +430,60 @@
             </div>
           </section>
 
-          <section class="panel tip-panel" id="tip-card" style="flex: 1;">
+          <section class="panel tip-panel" id="tip-card" style="flex: 0 0 auto;">
             <!-- Tip content injected by JS -->
           </section>
         </div>
+
+        <section class="panel" style="overflow-y: auto;"> <!-- AI News Column -->
+          <span class="section-title">AI Technical Pulse</span>
+          <ul class="ai-list" id="ai-list">
+            <!-- AI list injected by JS -->
+          </ul>
+        </section>
       </div> <!-- Close Layout Grid -->
     </div> <!-- Close Wrap -->
 
     <script>
+      // === AI DATA ===
+      const aiResources = [
+        { title: "Azure OpenAI Service: Data, privacy, and security details", url: "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy", tag: "Azure" },
+        { title: "Building RAG Applications with Azure AI Search", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview", tag: "RAG" },
+        { title: "Prompt Engineering Guide: Techniques (Zero-shot, Few-shot, CoT)", url: "https://www.promptingguide.ai/techniques", tag: "Prompt" },
+        { title: "LangChain: Python Documentation & Concepts", url: "https://python.langchain.com/docs/get_started/introduction", tag: "Code" },
+        { title: "Hugging Face: Transformers Library Documentation", url: "https://huggingface.co/docs/transformers/index", tag: "HF" },
+        { title: "Fine-tuning LLMs with PEFT and LoRA", url: "https://huggingface.co/blog/peft", tag: "Tune" },
+        { title: "OpenAI Cookbook: Common API Tasks & Recipes", url: "https://github.com/openai/openai-cookbook", tag: "Code" },
+        { title: "Llama 3: Model Card & Technical Specs", url: "https://ai.meta.com/blog/meta-llama-3/", tag: "Model" },
+        { title: "Vectors 101: Comparison of Vector Databases", url: "https://learn.microsoft.com/en-us/semantic-kernel/memories/vector-db", tag: "DB" },
+        { title: "System Prompts: Best Practices for steering LLMs", url: "https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/system-message", tag: "Prompt" },
+        { title: "Function Calling in OpenAI Models: Guide", url: "https://platform.openai.com/docs/guides/function-calling", tag: "Code" },
+        { title: "Semantic Kernel for .NET Developers: Overview", url: "https://learn.microsoft.com/en-us/semantic-kernel/overview/", tag: "SDK" },
+        { title: "Understanding Embeddings and Cosine Similarity", url: "https://platform.openai.com/docs/guides/embeddings", tag: "Math" },
+        { title: "Quantization Explained: GGUF vs GPTQ vs AWQ", url: "https://huggingface.co/docs/optimum/concept_guides/quantization", tag: "Tune" },
+        { title: "Autogen: Enabling Next-Gen LLM Applications", url: "https://microsoft.github.io/autogen/", tag: "Agent" },
+        { title: "DSPy: Programming—not prompting—Foundation Models", url: "https://github.com/stanfordnlp/dspy", tag: "Code" },
+        { title: "Phi-3: Microsoft's Small Language Models (SLM) Technical Blog", url: "https://azure.microsoft.com/en-us/blog/introducing-phi-3-redefining-whats-possible-with-slms/", tag: "SLM" },
+        { title: "Ollama: Running Llama 3 and others locally", url: "https://ollama.com/", tag: "Local" },
+        { title: "Copilot Studio: Extending Copilot with custom topics", url: "https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio", tag: "LowCode" },
+        { title: "Evaluating RAG pipelines with Ragas", url: "https://docs.ragas.io/en/latest/", tag: "Eval" }
+      ];
+
+      const renderAiList = () => {
+        // Randomly select 10 unique resources
+        const shuffled = [...aiResources].sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 10);
+        
+        const html = selected.map(item => `
+          <li class="ai-item">
+            <span class="ai-tag">[${item.tag}]</span>
+            <a href="${item.url}" target="_blank" rel="noopener">${item.title}</a>
+          </li>
+        `).join('');
+        
+        document.getElementById('ai-list').innerHTML = html;
+      };
+
       // === TIPS DATA ===
       const d365Tips = [
         {
@@ -446,8 +539,9 @@
         document.getElementById('tip-card').innerHTML = html;
       };
 
-      // Initialize Tip
+      // Initialize Tip & AI List
       renderTip();
+      renderAiList();
 
       const el = (id) => document.getElementById(id);
 
