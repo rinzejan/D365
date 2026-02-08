@@ -487,20 +487,42 @@
       ];
 
       const renderAiList = (filterText = "") => {
-        let selected;
-        if (filterText) {
-          const lowerFilter = filterText.toLowerCase();
-          selected = aiResources.filter(item => 
-            item.title.toLowerCase().includes(lowerFilter) || 
-            item.tag.toLowerCase().includes(lowerFilter)
-          );
+        let itemsToRender = [];
+
+        if (filterText && filterText.trim().length > 0) {
+          const term = encodeURIComponent(filterText.trim());
+          const googleBase = "https://www.google.com/search?q=";
+          const displayTerm = filterText.trim();
+          
+          itemsToRender = [
+            { tag: "News", title: `Latest News & Trends for "${displayTerm}"`, url: `${googleBase}${term}+ai+news+2025` },
+            { tag: "Learn", title: `Tutorials & Guides: ${displayTerm}`, url: `${googleBase}${term}+ai+tutorial+guide` },
+            { tag: "GitHub", title: `GitHub Repositories: ${displayTerm}`, url: `${googleBase}site:github.com+${term}+ai` },
+            { tag: "Paper", title: `Research Papers (ArXiv): ${displayTerm}`, url: `${googleBase}site:arxiv.org+${term}+ai` },
+            { tag: "Code", title: `Python Libraries & Tools`, url: `${googleBase}${term}+python+library+ai` },
+            { tag: "Arch", title: `Architecture Patterns`, url: `${googleBase}${term}+ai+architecture+design` },
+            { tag: "Deep", title: `Detailed Explanation & Concepts`, url: `${googleBase}what+is+${term}+ai+deep+dive` },
+            { tag: "HF", title: `Hugging Face Models & Datasets`, url: `${googleBase}site:huggingface.co+${term}` },
+            { tag: "Msft", title: `Microsoft Learn Documentation`, url: `${googleBase}site:learn.microsoft.com+${term}+ai` },
+            { tag: "Video", title: `YouTube Video Tutorials`, url: `${googleBase}site:youtube.com+${term}+ai+tutorial` },
+            { tag: "Social", title: `Reddit Discussions & Threads`, url: `${googleBase}site:reddit.com+${term}+ai` },
+            { tag: "Best", title: `Best Practices & Tips`, url: `${googleBase}${term}+ai+best+practices` },
+            { tag: "Sec", title: `Security & Privacy Concerns`, url: `${googleBase}${term}+ai+security+risks` },
+            { tag: "Comp", title: `Comparisons & Alternatives`, url: `${googleBase}${term}+vs+alternatives` },
+            { tag: "Use", title: `Business Use Cases`, url: `${googleBase}${term}+ai+use+cases` },
+            { tag: "Cost", title: `Pricing & Cost Analysis`, url: `${googleBase}${term}+ai+pricing+cost` },
+            { tag: "Prompt", title: `Prompt Engineering Strategies`, url: `${googleBase}${term}+prompt+engineering` },
+            { tag: "Eval", title: `Benchmarks & Evaluation`, url: `${googleBase}${term}+ai+benchmarks` },
+            { tag: "Int", title: `Integration Guides`, url: `${googleBase}how+to+integrate+${term}+in+app` },
+            { tag: "Docs", title: `Official Documentation Search`, url: `${googleBase}${term}+documentation+official` }
+          ];
         } else {
           // Randomly select 20 unique resources
           const shuffled = [...aiResources].sort(() => 0.5 - Math.random());
-          selected = shuffled.slice(0, 20);
+          itemsToRender = shuffled.slice(0, 20);
         }
         
-        const html = selected.map(item => `
+        const html = itemsToRender.map(item => `
           <li class="ai-item">
             <span class="ai-tag">[${item.tag}]</span>
             <a href="${item.url}" target="_blank" rel="noopener">${item.title}</a>
