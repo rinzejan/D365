@@ -466,13 +466,27 @@
         { title: "Phi-3: Microsoft's Small Language Models (SLM) Technical Blog", url: "https://azure.microsoft.com/en-us/blog/introducing-phi-3-redefining-whats-possible-with-slms/", tag: "SLM" },
         { title: "Ollama: Running Llama 3 and others locally", url: "https://ollama.com/", tag: "Local" },
         { title: "Copilot Studio: Extending Copilot with custom topics", url: "https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio", tag: "LowCode" },
-        { title: "Evaluating RAG pipelines with Ragas", url: "https://docs.ragas.io/en/latest/", tag: "Eval" }
+        { title: "Evaluating RAG pipelines with Ragas", url: "https://docs.ragas.io/en/latest/", tag: "Eval" },
+        { title: "GraphRAG: Unlocking LLM discovery on narrative private data", url: "https://microsoft.github.io/graphrag/", tag: "RAG" },
+        { title: "Mistral 7B: Technical Report & Benchmarks", url: "https://mistral.ai/news/announcing-mistral-7b/", tag: "Model" },
+        { title: "vLLM: Easy, Fast, and Cheap LLM Serving", url: "https://docs.vllm.ai/en/latest/", tag: "Ops" },
+        { title: "CrewAI: Orchestrating Role-Playing Agents", url: "https://www.crewai.com/", tag: "Agent" },
+        { title: "Direct Preference Optimization (DPO) Paper", url: "https://arxiv.org/abs/2305.18290", tag: "Tune" },
+        { title: "GPT-4o: Multimodal Model Capabilities", url: "https://openai.com/index/hello-gpt-4o/", tag: "Model" },
+        { title: "ONNX Runtime: Accelerating AI across platforms", url: "https://onnxruntime.ai/", tag: "Ops" },
+        { title: "Tokenizers: How machines read text (Hugging Face Course)", url: "https://huggingface.co/learn/nlp-course/chapter2/4?fw=pt", tag: "NLP" },
+        { title: "Responsible AI Transparency Reports", url: "https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/transparency-note", tag: "Safety" },
+        { title: "MLflow: Managing the LLM Lifecycle", url: "https://mlflow.org/docs/latest/llms/index.html", tag: "Ops" },
+        { title: "Semantic Caching with Redis for LLMs", url: "https://redis.io/generative-ai/", tag: "Cache" },
+        { title: "Function Calling with Anthropic Claude", url: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use", tag: "Code" },
+        { title: "Google Gemini: Technical Report", url: "https://storage.googleapis.com/deepmind-media/gemini/gemini_1_report.pdf", tag: "Model" },
+        { title: "Chain-of-Thought Prompting Elicits Reasoning in LLMs", url: "https://arxiv.org/abs/2201.11903", tag: "Rsch" }
       ];
 
       const renderAiList = () => {
-        // Randomly select 10 unique resources
+        // Randomly select 25 unique resources
         const shuffled = [...aiResources].sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 10);
+        const selected = shuffled.slice(0, 25);
         
         const html = selected.map(item => `
           <li class="ai-item">
