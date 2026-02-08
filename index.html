@@ -436,7 +436,10 @@
         </div>
 
         <section class="panel" style="overflow-y: auto;"> <!-- AI News Column -->
-          <span class="section-title">AI Technical Pulse</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+            <span class="section-title" style="margin-bottom: 0; border: none; padding: 0;">AI Technical Pulse</span>
+            <input type="text" id="ai-search" placeholder="Filter topics..." style="width: 120px; height: 24px; font-size: 11px;">
+          </div>
           <ul class="ai-list" id="ai-list">
             <!-- AI list injected by JS -->
           </ul>
@@ -483,10 +486,19 @@
         { title: "Chain-of-Thought Prompting Elicits Reasoning in LLMs", url: "https://arxiv.org/abs/2201.11903", tag: "Rsch" }
       ];
 
-      const renderAiList = () => {
-        // Randomly select 20 unique resources
-        const shuffled = [...aiResources].sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 20);
+      const renderAiList = (filterText = "") => {
+        let selected;
+        if (filterText) {
+          const lowerFilter = filterText.toLowerCase();
+          selected = aiResources.filter(item => 
+            item.title.toLowerCase().includes(lowerFilter) || 
+            item.tag.toLowerCase().includes(lowerFilter)
+          );
+        } else {
+          // Randomly select 20 unique resources
+          const shuffled = [...aiResources].sort(() => 0.5 - Math.random());
+          selected = shuffled.slice(0, 20);
+        }
         
         const html = selected.map(item => `
           <li class="ai-item">
@@ -556,6 +568,10 @@
       // Initialize Tip & AI List
       renderTip();
       renderAiList();
+
+      document.getElementById('ai-search').addEventListener('input', (e) => {
+        renderAiList(e.target.value.trim());
+      });
 
       const el = (id) => document.getElementById(id);
 
